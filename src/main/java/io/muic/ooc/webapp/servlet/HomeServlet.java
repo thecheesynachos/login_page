@@ -5,6 +5,7 @@
  */
 package io.muic.ooc.webapp.servlet;
 
+import io.muic.ooc.webapp.MySQLJava;
 import io.muic.ooc.webapp.Routable;
 import io.muic.ooc.webapp.service.SecurityService;
 import java.io.IOException;
@@ -38,7 +39,8 @@ public class HomeServlet extends HttpServlet implements Routable {
         if (authorized) {
             // do MVC in here
             String username = (String) request.getSession().getAttribute("username");
-            request.setAttribute("username", username);
+            String name = securityService.getName(username);
+            request.setAttribute("name", name);
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/home.jsp");
             rd.include(request, response);
         } else {

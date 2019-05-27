@@ -5,38 +5,40 @@
  */
 package io.muic.ooc.webapp.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.StringUtils;
+
+import io.muic.ooc.webapp.MySQLJava;
 
 /**
  *
  * @author gigadot
  */
 public class SecurityService {
-    
-    private Map<String, String> userCredentials = new HashMap<String, String>() {{
-        put("admin", "123456");
-        put("muic", "1111");
-    }};
+
+    private MySQLJava database = MySQLJava.getInstance();
     
     public boolean isAuthorized(HttpServletRequest request) {
-        String username = (String) request.getSession()
-                .getAttribute("username");
+        String username = (String) request.getSession().getAttribute("username");
         // do checking
-       return (username != null && userCredentials.containsKey(username));
+       return (username != null && database.hasUser(username));
     }
     
     public boolean authenticate(String username, String password, HttpServletRequest request) {
-        String passwordInDB = userCredentials.get(username);
-        boolean isMatched = StringUtils.equals(password, passwordInDB);
+        boolean isMatched = database.loginSuccess(username, password);
         if (isMatched) {
             request.getSession().setAttribute("username", username);
             return true;
         } else {
             return false;
         }
+    }
+
+    public String getName(String username){
+        return database.getName(username);
+    }
+
+    public boolean addNewUser(String username, String password, String name){
+        return database.addNewUser(username, password, name);
     }
     
     public void logout(HttpServletRequest request) {
