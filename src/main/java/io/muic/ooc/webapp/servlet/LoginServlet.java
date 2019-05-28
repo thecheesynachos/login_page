@@ -1,6 +1,5 @@
 package io.muic.ooc.webapp.servlet;
 
-import io.muic.ooc.webapp.service.SecurityService;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,8 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import io.muic.ooc.webapp.Routable;
 
 public class LoginServlet extends HttpServlet implements Routable {
-
-    private SecurityService securityService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,12 +29,14 @@ public class LoginServlet extends HttpServlet implements Routable {
             } else {
                 String message = "Wrong username or password.";
                 request.setAttribute("message", message);
+                request.setAttribute("messagestatus", "danger");
                 RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/login.jsp");
                 rd.include(request, response);
             }
         } else {
             String message = "Username or password is missing.";
             request.setAttribute("message", message);
+            request.setAttribute("messagestatus", "danger");
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/login.jsp");
             rd.include(request, response);
         }
@@ -53,8 +52,4 @@ public class LoginServlet extends HttpServlet implements Routable {
         return "/login";
     }
 
-    @Override
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
-    }
 }

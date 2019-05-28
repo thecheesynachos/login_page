@@ -12,13 +12,12 @@ import java.io.IOException;
 
 public class LogoutServlet extends HttpServlet implements Routable {
 
-	private SecurityService securityService;
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.getSession().invalidate();
 		String message = "Successfully logged out.";
 		req.setAttribute("message", message);
+		req.setAttribute("messagestatus", "success");
 		RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/login.jsp");
 		rd.include(req, resp);
 	}
@@ -26,11 +25,6 @@ public class LogoutServlet extends HttpServlet implements Routable {
 	@Override
 	public String getMapping() {
 		return "/logout";
-	}
-
-	@Override
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
 	}
 
 }

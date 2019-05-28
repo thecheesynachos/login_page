@@ -4,7 +4,8 @@ import io.muic.ooc.webapp.service.SecurityService;
 
 public interface Routable {
 
+    SecurityService securityService = SecurityService.getInstance();
+
     String getMapping();
 
-    void setSecurityService(SecurityService securityService);
 }

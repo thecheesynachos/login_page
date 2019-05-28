@@ -1,8 +1,6 @@
 package io.muic.ooc.webapp.servlet;
 
-import io.muic.ooc.webapp.MySQLJava;
 import io.muic.ooc.webapp.Routable;
-import io.muic.ooc.webapp.service.SecurityService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,12 +11,18 @@ import java.io.IOException;
 
 public class NewUserServlet extends HttpServlet implements Routable {
 
-	private SecurityService securityService;
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/newuser.jsp");
-		rd.include(req, resp);
+		boolean authorised = securityService.isAuthorized(req);
+		if (authorised) {
+			String username = (String) req.getSession().getAttribute("username");
+			String name = securityService.getName(username);
+			req.setAttribute("name", name);
+			RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/newuser.jsp");
+			rd.include(req, resp);
+		} else{
+			resp.sendRedirect("/");
+		}
 	}
 
 	@Override
@@ -30,9 +34,11 @@ public class NewUserServlet extends HttpServlet implements Routable {
 		if (success){
 			String message = "Successfully created a new user.";
 			req.setAttribute("message", message);
+			req.setAttribute("messagestatus", "success");
 		} else{
 			String message = "An error occurred in creating a new user.";
 			req.setAttribute("message", message);
+			req.setAttribute("messagestatus", "danger");
 		}
 		RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/home.jsp");
 		rd.include(req, resp);
@@ -41,11 +47,6 @@ public class NewUserServlet extends HttpServlet implements Routable {
 	@Override
 	public String getMapping() {
 		return "/newuser";
-	}
-
-	@Override
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
 	}
 
 }

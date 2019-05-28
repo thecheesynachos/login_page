@@ -21,16 +21,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HomeServlet extends HttpServlet implements Routable {
 
-    private SecurityService securityService;
-
     @Override
     public String getMapping() {
         return "/index.jsp";
-    }
-
-    @Override
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
     }
 
     @Override
@@ -40,7 +33,7 @@ public class HomeServlet extends HttpServlet implements Routable {
             // do MVC in here
             String username = (String) request.getSession().getAttribute("username");
             String name = securityService.getName(username);
-            request.setAttribute("name", name);
+            request.getSession().setAttribute("name", name);
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/home.jsp");
             rd.include(request, response);
         } else {

@@ -5,11 +5,8 @@
  */
 package io.muic.ooc.webapp;
 
-import io.muic.ooc.webapp.servlet.HomeServlet;
+import io.muic.ooc.webapp.servlet.*;
 import io.muic.ooc.webapp.service.SecurityService;
-import io.muic.ooc.webapp.servlet.LoginServlet;
-import io.muic.ooc.webapp.servlet.LogoutServlet;
-import io.muic.ooc.webapp.servlet.NewUserServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 
@@ -30,19 +27,13 @@ public class ServletRouter {
         routables.add(LoginServlet.class);
         routables.add(LogoutServlet.class);
         routables.add(NewUserServlet.class);
-    }
-
-    private SecurityService securityService;
-
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
+        routables.add(SeeUsersServlet.class);
     }
 
     public void init(Context ctx) {
         for (Class<? extends Routable> routableClass : routables) {
             try {
                 Routable routable = routableClass.newInstance();
-                routable.setSecurityService(securityService);
                 String name = routable.getClass().getSimpleName();
                 Tomcat.addServlet(ctx, name, (HttpServlet) routable);
                 ctx.addServletMapping(routable.getMapping(), name);

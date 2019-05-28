@@ -8,6 +8,7 @@ package io.muic.ooc.webapp.service;
 import javax.servlet.http.HttpServletRequest;
 
 import io.muic.ooc.webapp.MySQLJava;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -16,6 +17,12 @@ import io.muic.ooc.webapp.MySQLJava;
 public class SecurityService {
 
     private MySQLJava database = MySQLJava.getInstance();
+
+    private static SecurityService securityService = new SecurityService();
+
+    public static SecurityService getInstance() {
+        return securityService;
+    }
     
     public boolean isAuthorized(HttpServletRequest request) {
         String username = (String) request.getSession().getAttribute("username");
@@ -38,7 +45,12 @@ public class SecurityService {
     }
 
     public boolean addNewUser(String username, String password, String name){
-        return database.addNewUser(username, password, name);
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        return database.addNewUser(username, hashedPassword, name);
+    }
+
+    public boolean removeUser(String username){
+        return database.removeUser(username);
     }
     
     public void logout(HttpServletRequest request) {

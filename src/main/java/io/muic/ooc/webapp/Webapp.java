@@ -20,9 +20,7 @@ public class Webapp {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8082);
 
-        SecurityService securityService = new SecurityService();
         ServletRouter servletRouter = new ServletRouter();
-        servletRouter.setSecurityService(securityService);
 
         Context ctx;
         try {

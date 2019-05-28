@@ -1,5 +1,7 @@
 package io.muic.ooc.webapp;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -66,11 +68,16 @@ public class MySQLJava {
 
 	public boolean loginSuccess(String user, String pwd){
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT * FROM logindata.users WHERE username=? AND password=?;");
+			PreparedStatement ps = connection.prepareStatement("SELECT password FROM logindata.users WHERE username=?;");
 			ps.setString(1, user);
-			ps.setString(2, pwd);
 			ResultSet resultSet = ps.executeQuery();
-			return resultSet.isBeforeFirst();
+			if(resultSet.isBeforeFirst()) {
+				resultSet.next();
+				String hashedPassword = resultSet.getString("password");
+				return BCrypt.checkpw(pwd, hashedPassword);
+			} else{
+				return false;
+			}
 		} catch(Exception e){
 			e.printStackTrace();
 			return false;
@@ -96,6 +103,27 @@ public class MySQLJava {
 			ps.setString(1, username);
 			ps.setString(2, pwd);
 			ps.setString(3, name);
+			ps.execute();
+			return true;
+		} catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public ResultSet getUserData(){
+		try{
+			return statement.executeQuery("SELECT id, username, name FROM logindata.users;");
+		} catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public boolean removeUser(String username){
+		try {
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM logindata.users WHERE username=?;");
+			ps.setString(1, username);
 			ps.execute();
 			return true;
 		} catch(Exception e){
