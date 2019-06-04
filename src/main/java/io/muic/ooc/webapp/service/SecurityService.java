@@ -44,13 +44,25 @@ public class SecurityService {
         return database.getName(username);
     }
 
+    public String getName(int id){
+        return database.getName(id);
+    }
+
+    public int getId(String username){
+        return database.getId(username);
+    }
+
     public boolean addNewUser(String username, String password, String name){
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         return database.addNewUser(username, hashedPassword, name);
     }
 
-    public boolean removeUser(String username){
-        return database.removeUser(username);
+    public boolean removeUser(int id){
+        return database.removeUser(id);
+    }
+
+    public boolean editUser(int id, String username, String password, String name){
+        return database.editUser(id, username, password, name);
     }
     
     public void logout(HttpServletRequest request) {

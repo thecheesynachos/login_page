@@ -1,6 +1,8 @@
+CREATE DATABASE IF NOT EXISTS logindata;
+
 USE logindata;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
                      id INT KEY NOT NULL AUTO_INCREMENT,
                      username VARCHAR(20) UNIQUE NOT NULL,
                      password VARCHAR(60) NOT NULL,

@@ -7,13 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
-import io.muic.ooc.webapp.Routable;
 
 public class LoginServlet extends HttpServlet implements Routable {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/login.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login.jsp");
         rd.include(request, response);
     }
 
@@ -30,14 +29,14 @@ public class LoginServlet extends HttpServlet implements Routable {
                 String message = "Wrong username or password.";
                 request.setAttribute("message", message);
                 request.setAttribute("messagestatus", "danger");
-                RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/login.jsp");
+                RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login.jsp");
                 rd.include(request, response);
             }
         } else {
             String message = "Username or password is missing.";
             request.setAttribute("message", message);
             request.setAttribute("messagestatus", "danger");
-            RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/login.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login.jsp");
             rd.include(request, response);
         }
 

@@ -1,7 +1,5 @@
 package io.muic.ooc.webapp.servlet;
 
-import io.muic.ooc.webapp.Routable;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +16,7 @@ public class NewUserServlet extends HttpServlet implements Routable {
 			String username = (String) req.getSession().getAttribute("username");
 			String name = securityService.getName(username);
 			req.setAttribute("name", name);
-			RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/newuser.jsp");
+			RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/newuser.jsp");
 			rd.include(req, resp);
 		} else{
 			resp.sendRedirect("/");
@@ -40,7 +38,7 @@ public class NewUserServlet extends HttpServlet implements Routable {
 			req.setAttribute("message", message);
 			req.setAttribute("messagestatus", "danger");
 		}
-		RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/home.jsp");
+		RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/users.jsp");
 		rd.include(req, resp);
 	}
 

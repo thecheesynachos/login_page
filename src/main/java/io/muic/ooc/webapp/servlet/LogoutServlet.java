@@ -1,8 +1,5 @@
 package io.muic.ooc.webapp.servlet;
 
-import io.muic.ooc.webapp.Routable;
-import io.muic.ooc.webapp.service.SecurityService;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +15,7 @@ public class LogoutServlet extends HttpServlet implements Routable {
 		String message = "Successfully logged out.";
 		req.setAttribute("message", message);
 		req.setAttribute("messagestatus", "success");
-		RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/login.jsp");
+		RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/login.jsp");
 		rd.include(req, resp);
 	}
 

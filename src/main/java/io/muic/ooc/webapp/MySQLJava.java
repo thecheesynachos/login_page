@@ -2,22 +2,21 @@ package io.muic.ooc.webapp;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.swing.text.html.Option;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Optional;
 
 public class MySQLJava {
 
-	enum TestTableColumns {
-		username,
-		password,
-		name
-	}
+	public static final String DATABASE_HOSTNAME = Optional.ofNullable(System.getenv("DATABASE_HOSTNAME")).orElse("localhost");
+	public static final String DATABASE_PORT = Optional.ofNullable(System.getenv("DATABASE_PORT")).orElse("3306");
 
 	public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
-	public static final String MYSQL_URL = "jdbc:mysql://localhost:1150/logindata?user=user&password=12345";
+	public static final String MYSQL_URL = String.format("jdbc:mysql://%s:%s/logindata?useSSL=false&characterEncoding=UTF-8&user=root&password=12345", DATABASE_HOSTNAME, DATABASE_PORT);
 
 	private Connection connection;
 	private Statement statement;
@@ -30,6 +29,8 @@ public class MySQLJava {
 
 	public MySQLJava() {
 
+		System.out.println(String.format("My Database URL: %s", MYSQL_URL));
+
 		try {
 			Class.forName(MYSQL_DRIVER);
 			connection = DriverManager.getConnection(MYSQL_URL);
@@ -38,7 +39,6 @@ public class MySQLJava {
 			e.printStackTrace();
 		}
 	}
-
 
 	private void close() {
 		try {
@@ -52,7 +52,6 @@ public class MySQLJava {
 			e.printStackTrace();
 		}
 	}
-
 
 	public boolean hasUser(String user){
 		try {
@@ -97,6 +96,45 @@ public class MySQLJava {
 		}
 	}
 
+	public String getName(int id){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT name FROM logindata.users WHERE id=?;");
+			ps.setInt(1, id);
+			ResultSet resultSet = ps.executeQuery();
+			resultSet.next();
+			return resultSet.getString("name");
+		} catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String getUsername(int id){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT username FROM logindata.users WHERE id=?;");
+			ps.setInt(1, id);
+			ResultSet resultSet = ps.executeQuery();
+			resultSet.next();
+			return resultSet.getString("username");
+		} catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public int getId(String username){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT id FROM logindata.users WHERE username=?;");
+			ps.setString(1, username);
+			ResultSet resultSet = ps.executeQuery();
+			resultSet.next();
+			return resultSet.getInt("id");
+		} catch(Exception e){
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
 	public boolean addNewUser(String username, String pwd, String name){
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO logindata.users VALUES (DEFAULT,?,?,?);");
@@ -120,10 +158,26 @@ public class MySQLJava {
 		}
 	}
 
-	public boolean removeUser(String username){
+	public boolean removeUser(int id){
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM logindata.users WHERE username=?;");
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM logindata.users WHERE id=?;");
+			ps.setInt(1, id);
+			ps.execute();
+			return true;
+		} catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean editUser(int id, String username, String password, String name){
+		try {
+			PreparedStatement ps = connection.prepareStatement
+					("UPDATE logindata.users SET username=?, password=?, name=? WHERE id=?;");
 			ps.setString(1, username);
+			ps.setString(2, BCrypt.hashpw(password, BCrypt.gensalt()));
+			ps.setString(3, name);
+			ps.setInt(4, id);
 			ps.execute();
 			return true;
 		} catch(Exception e){

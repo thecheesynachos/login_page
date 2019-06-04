@@ -10,12 +10,16 @@
 <%
     if (request.getAttribute("message") != null){
 %>
+
+<div class="container fluid">
+
 <div class="card shadow mb-4">
     <div class="card bg-<%=request.getAttribute("messagestatus") %> text-white shadow">
         <div class="card-body">
             <%=request.getAttribute("message") %>
         </div>
     </div>
+</div>
 </div>
 <%
     }

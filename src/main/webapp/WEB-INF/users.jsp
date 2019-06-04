@@ -5,7 +5,7 @@
 <html>
 
 <head>
-    <title>Home page</title>
+    <title>Users</title>
     <link rel="stylesheet" href="../bootstrap/css/sb-admin-2.css">
 </head>
 
@@ -19,11 +19,10 @@
     
         <img src="../res/logo2.png" height="70%", class="justify-content-center">
     
-        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/users">Users list</a>
     
         <a class="nav-link" href="/newuser">Create a new user</a>
-    
-        <a class="nav-link" href="/users">See users</a>
+
         
         <!-- Topbar Navbar -->
         <ul class="navbar-nav ml-auto">
@@ -51,10 +50,15 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%=request.getSession().getAttribute("name")%></span>
+                    <span class="mr-2 d-none d-lg-inline text-gray-600"><%=MySQLJava.getInstance().getName((Integer)request.getSession().getAttribute("sessionId"))%></span>
                 </a>
                 <!-- Dropdown - User Information -->
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <div class="dropdown-item">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Username: <%=MySQLJava.getInstance().getUsername((Integer)request.getSession().getAttribute("sessionId"))%>
+                    </div>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/logout">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                         Logout
@@ -66,6 +70,20 @@
     
     </nav>
     <!-- End of Topbar -->
+    
+    <%
+        if (request.getAttribute("message") != null){
+    %>
+    <div class="card shadow mb-4">
+        <div class="card bg-<%=request.getAttribute("messagestatus") %> text-white shadow">
+            <div class="card-body">
+                <%=request.getAttribute("message") %>
+            </div>
+        </div>
+    </div>
+    <%
+        }
+    %>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -80,6 +98,7 @@
                         <th>ID</th>
                         <th>Username</th>
                         <th>Name</th>
+                        <th>Edit user</th>
                         <th>Remove user</th>
                     </tr>
                     </thead>
@@ -88,12 +107,81 @@
                         ResultSet rs = MySQLJava.getInstance().getUserData();
                         while(rs.next()){
                             try{
+                            	String usernameEntry = rs.getString("username");
+                            	String nameEntry = rs.getString("name");
+                            	int idEntry = rs.getInt("id");
                     %>
                     <tr>
-                        <td><%= rs.getString("id")%></td>
-                        <td><%= rs.getString("username")%></td>
-                        <td><%= rs.getString("name")%></td>
-                        <td><a href="/removeuser"></a></td>
+                        <td><%= idEntry %></td>
+                        <td><%= usernameEntry %></td>
+                        <td><%= nameEntry %></td>
+                        <td><!-- Button trigger modal -->
+                            <a href="#" data-toggle="modal" data-target="#edit<%= idEntry%>">Edit user</a>
+    
+                            <!-- Modal -->
+                            <div class="modal fade" id="edit<%= idEntry %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editHeader">Edit <%= usernameEntry %> data</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form action="/edituser" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="username-edit" class="col-form-label"> New username:</label>
+                                                    <input type="text" class="form-control" id="username-edit" name="username-edit" value="<%= usernameEntry%>" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="password-edit" class="col-form-label"> New password:</label>
+                                                    <input type="password" class="form-control" id="password-edit" name="password-edit" >
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="name-edit" class="col-form-label">New name:</label>
+                                                    <input type="text" class="form-control" id="name-edit" name="name-edit" value="<%= nameEntry%>" >
+                                                </div>
+                                            </div>
+                                            <input type="hidden" id="id-edit" name="id-edit" value=<%= idEntry%> >
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Edit user</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div></td>
+                        <td>
+                            <% if(idEntry != (Integer)request.getSession().getAttribute("sessionId") ){ %>
+                            <!-- Button trigger modal -->
+                            <a href="#" data-toggle="modal" data-target="#remove<%= idEntry%>">Remove user</a>
+    
+                            <!-- Modal -->
+                            <div class="modal fade" id="remove<%= idEntry%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            You are about to remove the user "<%= nameEntry%>". Are you sure?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="/removeuser" method="post">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                <button type="submit" class="btn btn-primary">Yes</button>
+                                                <input type="hidden" id="id-to-remove" name="id-to-remove" value=<%= idEntry%>>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </td>
                     </tr>
                     <%
                             } catch(Exception e){
