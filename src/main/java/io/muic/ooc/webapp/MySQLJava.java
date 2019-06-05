@@ -2,21 +2,16 @@ package io.muic.ooc.webapp;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.swing.text.html.Option;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Optional;
 
 public class MySQLJava {
 
-	public static final String DATABASE_HOSTNAME = Optional.ofNullable(System.getenv("DATABASE_HOSTNAME")).orElse("localhost");
-	public static final String DATABASE_PORT = Optional.ofNullable(System.getenv("DATABASE_PORT")).orElse("3306");
-
 	public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
-	public static final String MYSQL_URL = String.format("jdbc:mysql://%s:%s/logindata?useSSL=false&characterEncoding=UTF-8&user=root&password=12345", DATABASE_HOSTNAME, DATABASE_PORT);
+	public static final String MYSQL_URL = "jdbc:mysql://localhost:1150/logindata?useSSL=false&characterEncoding=UTF-8&user=root&password=12345";
 
 	private Connection connection;
 	private Statement statement;
@@ -28,8 +23,6 @@ public class MySQLJava {
 	}
 
 	public MySQLJava() {
-
-		System.out.println(String.format("My Database URL: %s", MYSQL_URL));
 
 		try {
 			Class.forName(MYSQL_DRIVER);

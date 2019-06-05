@@ -21,8 +21,6 @@ services:
       - '80:7742'
     depends_on:
       - db
-    environment:
-      - DATABASE_HOST=db
 
 # Names our volume
 volumes:
