@@ -4,11 +4,14 @@ import java.io.File;
 import javax.servlet.ServletException;
 
 import io.muic.ooc.webapp.service.SecurityService;
+import io.muic.ooc.webapp.service.WebFilter;
 import io.muic.ooc.webapp.servlet.HomeServlet;
 import io.muic.ooc.webapp.servlet.LoginServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 
 public class Main {
 
@@ -24,8 +27,20 @@ public class Main {
 
         Context ctx;
         try {
+
             ctx = tomcat.addWebapp("", docBase.getAbsolutePath());
             servletRouter.init(ctx);
+
+            Class filterClass = WebFilter.class;
+            FilterDef myFilterDef = new FilterDef();
+            myFilterDef.setFilterClass(filterClass.getName());
+            myFilterDef.setFilterName(filterClass.getSimpleName());
+            ctx.addFilterDef(myFilterDef);
+
+            FilterMap myFilterMap = new FilterMap();
+            myFilterMap.setFilterName(filterClass.getSimpleName());
+            myFilterMap.addURLPattern("/*");
+            ctx.addFilterMap(myFilterMap);
 
             tomcat.start();
             tomcat.getServer().await();
