@@ -14,7 +14,7 @@ public class RemoveUserServlet extends HttpServlet implements Routable {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		int id = Integer.parseInt(req.getParameter("id-to-remove"));
-		int sessionId = Integer.parseInt((String)req.getSession().getAttribute("sessionId"));
+		int sessionId = (Integer) req.getSession().getAttribute("sessionId");
 		if(id != sessionId) {
 			boolean success = SecurityService.getInstance().removeUser(id);
 			if (success) {
