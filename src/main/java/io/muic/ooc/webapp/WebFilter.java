@@ -1,4 +1,4 @@
-package io.muic.ooc.webapp.service;
+package io.muic.ooc.webapp;
 
 import io.muic.ooc.webapp.servlet.HomeServlet;
 import io.muic.ooc.webapp.servlet.Routable;
@@ -29,15 +29,21 @@ public class WebFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String path = httpRequest.getServletPath();
 		boolean found = false;
-		for (Routable r : ServletFactory.generateServlets()){
-			if(path.equals(r.getMapping())){
-				HttpServlet hs = (HttpServlet) r;
-				hs.service(httpRequest, httpResponse);
-				found = true;
+		boolean isCss = httpRequest.getRequestURI().contains("bootstrap");
+		boolean isRes = httpRequest.getRequestURI().contains("res");
+		if (isCss || isRes){
+			chain.doFilter(httpRequest, httpResponse);
+		} else {
+			for (Routable r : ServletFactory.generateServlets()) {
+				if (path.equals(r.getMapping())) {
+					HttpServlet hs = (HttpServlet) r;
+					hs.service(httpRequest, httpResponse);
+					found = true;
+				}
 			}
-		}
-		if (!found) {
-			home.service(httpRequest, httpResponse);
+			if (!found) {
+				home.service(httpRequest, httpResponse);
+			}
 		}
 	}
 

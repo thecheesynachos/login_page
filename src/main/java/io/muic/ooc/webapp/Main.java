@@ -3,10 +3,6 @@ package io.muic.ooc.webapp;
 import java.io.File;
 import javax.servlet.ServletException;
 
-import io.muic.ooc.webapp.service.SecurityService;
-import io.muic.ooc.webapp.service.WebFilter;
-import io.muic.ooc.webapp.servlet.HomeServlet;
-import io.muic.ooc.webapp.servlet.LoginServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
